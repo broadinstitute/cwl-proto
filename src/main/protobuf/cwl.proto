@@ -1,0 +1,66 @@
+syntax="proto3";
+//
+//cwlVersion: v1.0
+//class: Workflow
+//inputs:
+//  inp: File
+//  ex: string
+//
+//outputs:
+//  classout:
+//    type: File
+//    outputSource: compile/classfile
+//
+//steps:
+//  untar:
+//    run: tar-param.cwl
+//    in:
+//      tarfile: inp
+//      extractfile: ex
+//    out: [example_out]
+//
+//  compile:
+//    run: arguments.cwl
+//    in:
+//      src: untar/example_out
+//    out: [classfile]
+
+message Cwl {
+  string cwlVersion = 1;
+  string class = 2;
+  Input inputs = 4;
+  repeated Output outputs = 5;
+  map<string, Step> steps = 6;
+}
+
+message Input {
+  string id = 1;
+  string type = 2;
+  InputBinding inputBinding = 3;
+  map<string, Input> workflowInputs = 4;
+}
+
+message InputBinding {
+  uint32 position = 1;
+  string prefix = 2;
+}
+
+message Output {
+  string id = 1;
+  ClassOut classout = 2;
+}
+
+message ClassOut {
+  string type = 1;
+  string outputSource = 2;
+}
+
+message Step {
+  string run = 1;
+  repeated string out = 2;
+  In in = 3;
+}
+
+message In {
+  map<string, string> inMap = 1;
+}
