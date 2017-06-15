@@ -1,43 +1,40 @@
 syntax="proto3";
-//
-//cwlVersion: v1.0
-//class: Workflow
-//inputs:
-//  inp: File
-//  ex: string
-//
-//outputs:
-//  classout:
-//    type: File
-//    outputSource: compile/classfile
-//
-//steps:
-//  untar:
-//    run: tar-param.cwl
-//    in:
-//      tarfile: inp
-//      extractfile: ex
-//    out: [example_out]
-//
-//  compile:
-//    run: arguments.cwl
-//    in:
-//      src: untar/example_out
-//    out: [classfile]
 
-message Cwl {
+message Workflow {
   string cwlVersion = 1;
   string class = 2;
-  Input inputs = 4;
-  repeated Output outputs = 5;
-  map<string, Step> steps = 6;
+  map<string, InputParameter> inputs = 4;
+  map<string, OutputParameter> outputs = 5;
+  map<string, WorkflowStep> steps = 6;
+  string id = 3;
+
+  repeated Requirement requirements  = 7;
+
 }
 
-message Input {
+message Requirement {
+  string class = 1;
+  repeated string expressionLib = 2;
+  repeated Schema types = 3;
+}
+
+message Schema {
+  string type = 1;
+  repeated InputRecordField fields = 2;
+  string label = 3;
+}
+
+message InputRecordField {
+  string name = 1;
+  string type = 2;
+}
+
+message DockerRequirement {}
+
+message InputParameter {
   string id = 1;
   string type = 2;
   InputBinding inputBinding = 3;
-  map<string, Input> workflowInputs = 4;
 }
 
 message InputBinding {
@@ -45,9 +42,8 @@ message InputBinding {
   string prefix = 2;
 }
 
-message Output {
+message OutputParameter {
   string id = 1;
-  ClassOut classout = 2;
 }
 
 message ClassOut {
@@ -55,7 +51,7 @@ message ClassOut {
   string outputSource = 2;
 }
 
-message Step {
+message WorkflowStep {
   string run = 1;
   repeated string out = 2;
   In in = 3;

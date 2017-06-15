@@ -14,7 +14,7 @@ object R extends App {
   //val p = new Parser()
 
   //println(JsonFormat.fromJsonString[cwl.Cwl](json))
-  def p(in: String) = println(JsonFormat.fromJsonString[cwl.Cwl](in))
+  def p(in: String) = println(JsonFormat.fromJsonString[cwl.Workflow](in))
 
   p(json2)
   p(json3)
