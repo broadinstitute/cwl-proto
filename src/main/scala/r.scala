@@ -1,6 +1,6 @@
 import com.trueaccord.scalapb.json.{JsonFormat, Parser}
 
-object R extends App {
+object R {
 
   val json = """{"cwlVersion":"v1.0","class":"Workflow","inputs":{"inp":"File","ex":"string"},"outputs":{"classout":{"type":"File","outputSource":"compile/classfile"}}}"""
 
