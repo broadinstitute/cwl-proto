@@ -7,8 +7,27 @@ import shapeless.{:+:, CNil}
 
 package object cwl {
 
+  type WorkflowStepInputId = String
+
+  type WorkflowStepInputSource = Either[String, Array[String]]
+
   //These are supposed to be valid ECMAScript Expressions.  See http://www.commonwl.org/v1.0/Workflow.html#Expressions
   type Expression = String Refined MatchesRegex[W.`"$({.*}|{.*})"`.T] 
+
+  type Requirement = 
+    InlineJavascriptRequirement :+:
+    SchemaDefRequirement :+:
+    DockerRequirement :+:
+    SoftwareRequirement :+:
+    InitialWorkDirRequirement :+:
+    EnvVarRequirement :+:
+    ShellCommandRequirement :+:
+    ResourceRequirement :+:
+    SubworkflowFeatureRequirement :+:
+    ScatterFeatureRequirement :+:
+    MultipleInputFeatureRequirement :+:
+    StepInputExpressionRequirement :+:
+    CNil
 
   type MyriadInputType = 
     CWLType :+:
@@ -16,11 +35,14 @@ package object cwl {
     InputEnumSchema :+:
     InputArraySchema :+:
     String :+:
-    Array[CWLType] :+:
-    Array[InputRecordSchema] :+:
-    Array[InputEnumSchema] :+:
-    Array[InputArraySchema] :+:
-    Array[String] :+:
+    Array[
+      CWLType :+:
+      InputRecordSchema :+:
+      InputEnumSchema :+:
+      InputArraySchema :+:
+      String :+:
+      CNil
+    ] :+:
     CNil
 
   type MyriadOutputType = 
@@ -29,12 +51,30 @@ package object cwl {
     OutputEnumSchema :+:
     OutputArraySchema :+:
     String :+:
-    Array[CWLType] :+:
-    Array[OutputRecordSchema] :+:
-    Array[OutputEnumSchema] :+:
-    Array[OutputArraySchema] :+:
-    Array[String] :+:
+    Array[
+      CWLType :+:
+      OutputRecordSchema :+:
+      OutputEnumSchema :+:
+      OutputArraySchema :+:
+      String :+:
+      CNil
+    ] :+:
     CNil
 
+  type MyriadCommandInputType = 
+    CWLType :+:
+    CommandInputRecordSchema :+:
+    CommandInputEnumSchema :+:
+    CommandInputArraySchema :+:
+    String :+:
+    Array[
+      CWLType  :+:
+      CommandInputRecordSchema :+:
+      CommandInputEnumSchema :+:
+      CommandInputArraySchema :+:
+      String :+:
+      CNil 
+      ] :+:
+    CNil 
 
 }
