@@ -1,11 +1,11 @@
-package broad
+package broad.cwl
 
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.string._
 import eu.timepit.refined._
 import shapeless.{:+:, CNil}
 
-package object cwl {
+package object model {
 
   type WorkflowStepInputId = String
 

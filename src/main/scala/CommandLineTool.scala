@@ -1,4 +1,4 @@
-package broad.cwl
+package broad.cwl.model
 
 import shapeless.{:+:, CNil}
 import eu.timepit.refined.string._
@@ -17,11 +17,11 @@ case class CommandLineTool(
   label: Option[String],
   doc: Option[String],
   cwlVersion: Option[CWLVersion],
-  baseCommand: Either[String, Array[String]],
+  baseCommand: String :+: Array[String] :+: CNil,
   arguments: Array[Expression :+: CommandLineBinding :+: String :+: CNil],
-  stdin: Option[Either[Expression, String]],
-  stderr: Option[Either[Expression, String]],
-  stdout: Option[Either[Expression, String]],
+  stdin: Option[Expression :+: String :+: CNil],
+  stderr: Option[Expression :+: String :+: CNil],
+  stdout: Option[Expression :+: String :+: CNil],
   successCodes: Array[Int],
   temporaryFailCodes: Array[Int],
   permanentFailCodes: Array[Int])
@@ -29,10 +29,10 @@ case class CommandLineTool(
 case class CommandInputParameter(
   id: String,
   label: Option[String],
-  secondaryFiles: Option[Array[Either[Expression, String]]],
+  secondaryFiles: Option[Array[Expression :+: String :+: CNil]],
   format: Expression :+: Array[String] :+: String :+: CNil, //only valid when type: File
   streamable: Option[Boolean],//only valid when type: File
-  doc: Option[Either[String, Array[String]]],
+  doc: Option[String :+: Array[String] :+: CNil],
   inputBinding: Option[CommandLineBinding],
   default: String, //TODO Any type here
   `type`: MyriadInputType
@@ -84,7 +84,7 @@ case class CommandInputArraySchema(
 case class CommandOutputParameter(
   id: String,
   label: Option[String],
-  secondaryFiles: Option[Expression :+: String :+: Array[Either[Expression, String]] :+: CNil],
+  secondaryFiles: Option[Expression :+: String :+: Array[Expression :+: String :+: CNil] :+: CNil],
   format: Expression :+: Array[String] :+: String :+: CNil, //only valid when type: File
   streamable: Option[Boolean],//only valid when type: File
   doc: Option[Either[String, Array[String]]],
