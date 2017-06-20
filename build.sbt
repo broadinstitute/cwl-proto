@@ -8,7 +8,8 @@ PB.targets in Compile := Seq(
 
 libraryDependencies += "com.trueaccord.scalapb" %% "scalapb-json4s" % "0.3.0"
 libraryDependencies ++= Seq(
-  "eu.timepit" %% "refined"            % "0.8.2"
+  "eu.timepit" %% "refined"            % "0.8.2",
+  "com.github.benhutchison" %% "mouse" % "0.8"
   )
 
 scalaVersion := "2.12.2"
