@@ -1,4 +1,5 @@
-package broad.cwl
+package broad.cwl.model
+
 import enumeratum.Circe._
 import io.circe.syntax._
 import io.circe._
@@ -35,13 +36,14 @@ baseCommand: echo
 inputs:
   message:
     type: 
-      type: rsecord
+      type: record
 outputs: []
 """
 
   val firstWorkflow = """
 cwlVersion: v1.0
 class: Workflow
+s: Hi
 inputs:
   inp: File
   ex: string
@@ -51,41 +53,34 @@ outputs:
     type: File
     outputSource: compile/classfile
 
-steps:
+steps: 
   untar:
     run: tar-param.cwl
     in:
       tarfile: inp
       extractfile: ex
     out: [example_out]
-
-  compile:
+  compile: 
     run: arguments.cwl
     in:
       src: untar/example_out
     out: [classfile]
 """
 
-val wf = decode[Workflow](parser.parse(enforceType).right.get.noSpaces)
+val wf = decode[Workflow](parser.parse(firstWorkflow).right.get.noSpaces)
  println(wf)
 
 }
 
-case class Workflow(
-  cwlVersion: String,
-  `class`: String,
-  inputs: Map[InputParameter#Id, InputParameter] :+: Map[InputParameter#Id, InputParameter#`type`] :+: Array[InputParameter] :+: CNil,
-  outputs: Map[WorkflowOutputParameter#Id, WorkflowOutputParameter] :+: Map[WorkflowOutputParameter#Id, WorkflowOutputParameter#`type`] :+: Array[WorkflowOutputParameter] :+: CNil,
-  steps: Array[WorkflowStep]
-  )
+case class WorkflowStepInput(src: String)
 
 case class InputParameter(
   id: Option[String], //not really optional but can be specified upstream 
   label: Option[String],
-  secondaryFiles: Option[Expression :+: String :+: Array[Either[Expression, String]] :+: CNil],
+  secondaryFiles: Option[Expression :+: String :+: Array[Expression :+: String :+: CNil] :+: CNil],
   format: Option[Expression :+: String :+: Array[String] :+: CNil],
   streamable: Option[Boolean],
-  doc: Option[Either[String, Array[String]]],
+  doc: Option[String :+: Array[String] :+: CNil],
   inputBinding: Option[CommandLineBinding],
   default: Option[String], //can be of type "Any" which... sucks.
   `type`: Option[MyriadInputType]) {
@@ -124,16 +119,16 @@ case class CommandLineBinding(
   prefix: Option[String],
   separate: Option[String],
   itemSeparator: Option[String],
-  valueFrom: Option[Either[Expression,String]], // could be "Expression" to be evaluated
+  valueFrom: Option[Expression :+: String :+: CNil], // could be "Expression" to be evaluated
   shellQuote: Option[Boolean])
 
 case class WorkflowOutputParameter(
   id: Option[String], //Really not optional but can be declared upstream
   label: Option[String],
-  secondaryFiles: Option[Expression :+: String :+: Array[Either[Expression, String]] :+: CNil],
+  secondaryFiles: Option[Expression :+: String :+: Array[Expression :+: String :+: CNil] :+: CNil],
   format: Option[Expression :+: String :+: Array[String] :+: CNil],
   streamable: Option[Boolean],
-  doc: Option[Either[String, Array[String]]],
+  doc: Option[String :+: Array[String] :+: CNil],
   `type`: Option[MyriadOutputType]) {
 
   type `type` = MyriadOutputType
@@ -164,7 +159,7 @@ case class OutputEnumSchema(
 case class CommandOutputBinding(
   glob: Option[Expression :+: String :+: Array[String] :+: CNil],
   loadContents: Option[Boolean],
-  outputEval: Option[Either[Expression, String]])
+  outputEval: Option[Expression :+: String :+: CNil])
 
 case class OutputArraySchema(
   items: MyriadOutputType,
@@ -172,20 +167,6 @@ case class OutputArraySchema(
   label: Option[String],
   outputBinding: Option[CommandOutputBinding])
 
-
-case class WorkflowStep(
-  id: Option[String], //not actually optional but can be declared as a key for this whole object for convenience
-  in: Array[WorkflowStepInput] :+: Map[WorkflowStepInputId, WorkflowStepInputSource] :+: Map[WorkflowStepInputId, WorkflowStepInput] :+: CNil,
-  out: Either[Array[String], Array[WorkflowStepOutput]],
-  run: String :+: CommandLineTool :+: ExpressionTool :+: Workflow :+: CNil,
-  requirements: Option[Array[Requirement]],
-  hints: Array[String], //TODO: should be 'Any' type
-  label: Option[String],
-  doc: Option[String],
-  scatter: Either[String, Array[String]],
-  scatterMethod: Option[ScatterMethod]
-  
-  )
 
 case class InlineJavascriptRequirement(
   `class`: String Refined MatchesRegex[W.`"InlineJavascriptRequirement"`.T],
@@ -242,16 +223,13 @@ case class InitialWorkDirRequirement(
  *  @see <a href="http://www.commonwl.org/v1.0/CommandLineTool.html#Dirent">Dirent Specification</a>
  */
 case class Dirent(
-  entry: Either[Expression, String], 
-  entryName: Option[Either[Expression, String]],
+  entry: Expression :+: String :+: CNil, 
+  entryName: Option[Expression :+: String :+: CNil],
   writable: Option[Boolean]
   )
 
 //TODO
 //Figure out how to declare Any type
-case class ExpressionTool()
-case class WorkflowStepInput()
-case class WorkflowStepOutput()
 case class EnvVarRequirement(
   `class`: String Refined MatchesRegex[W.`"EnvVarRequirement"`.T],
   envDef: 
@@ -260,7 +238,7 @@ case class EnvVarRequirement(
     Map[EnvironmentDef#EnvName, EnvironmentDef] :+:
     CNil)
 
-case class EnvironmentDef(envName: String, envValue: Either[Expression, String]) {
+case class EnvironmentDef(envName: String, envValue: Expression :+: String :+: CNil) {
   type EnvName = String
   type EnvValue = String
 }

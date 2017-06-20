@@ -1,15 +1,15 @@
-package broad
+package broad.cwl
 
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.string._
 import eu.timepit.refined._
 import shapeless.{:+:, CNil}
 
-package object cwl {
+package object model {
 
   type WorkflowStepInputId = String
 
-  type WorkflowStepInputSource = Either[String, Array[String]]
+  type WorkflowStepInputSource = String :+: Array[String] :+: CNil
 
   //These are supposed to be valid ECMAScript Expressions.  See http://www.commonwl.org/v1.0/Workflow.html#Expressions
   type Expression = String Refined MatchesRegex[W.`"$({.*}|{.*})"`.T] 

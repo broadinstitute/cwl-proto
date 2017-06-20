@@ -1,4 +1,4 @@
-package broad.cwl
+package broad.cwl.model
 
 import enumeratum._
 import mouse.boolean._
