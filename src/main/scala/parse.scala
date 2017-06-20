@@ -35,13 +35,14 @@ baseCommand: echo
 inputs:
   message:
     type: 
-      type: rsecord
+      type: record
 outputs: []
 """
 
   val firstWorkflow = """
 cwlVersion: v1.0
 class: Workflow
+s: Hi
 inputs:
   inp: File
   ex: string
@@ -51,32 +52,28 @@ outputs:
     type: File
     outputSource: compile/classfile
 
-steps:
-  untar:
-    run: tar-param.cwl
-    in:
-      tarfile: inp
-      extractfile: ex
-    out: [example_out]
-
-  compile:
+steps: 
+  compile: 
     run: arguments.cwl
     in:
       src: untar/example_out
     out: [classfile]
 """
 
-val wf = decode[Workflow](parser.parse(enforceType).right.get.noSpaces)
+val wf = decode[Workflow](parser.parse(firstWorkflow).right.get.noSpaces)
  println(wf)
 
 }
+
+case class WorkflowStepInput(src: String)
 
 case class Workflow(
   cwlVersion: String,
   `class`: String,
   inputs: Map[InputParameter#Id, InputParameter] :+: Map[InputParameter#Id, InputParameter#`type`] :+: Array[InputParameter] :+: CNil,
   outputs: Map[WorkflowOutputParameter#Id, WorkflowOutputParameter] :+: Map[WorkflowOutputParameter#Id, WorkflowOutputParameter#`type`] :+: Array[WorkflowOutputParameter] :+: CNil,
-  steps: Array[WorkflowStep]
+  steps: Map[String, WorkflowStep] :+: Array[WorkflowStep] :+: CNil,
+  s: Either[Workflow, String]
   )
 
 case class InputParameter(
@@ -173,20 +170,6 @@ case class OutputArraySchema(
   outputBinding: Option[CommandOutputBinding])
 
 
-case class WorkflowStep(
-  id: Option[String], //not actually optional but can be declared as a key for this whole object for convenience
-  in: Array[WorkflowStepInput] :+: Map[WorkflowStepInputId, WorkflowStepInputSource] :+: Map[WorkflowStepInputId, WorkflowStepInput] :+: CNil,
-  out: Either[Array[String], Array[WorkflowStepOutput]],
-  run: String :+: CommandLineTool :+: ExpressionTool :+: Workflow :+: CNil,
-  requirements: Option[Array[Requirement]],
-  hints: Array[String], //TODO: should be 'Any' type
-  label: Option[String],
-  doc: Option[String],
-  scatter: Either[String, Array[String]],
-  scatterMethod: Option[ScatterMethod]
-  
-  )
-
 case class InlineJavascriptRequirement(
   `class`: String Refined MatchesRegex[W.`"InlineJavascriptRequirement"`.T],
   expressionLib: Option[Array[String]])
@@ -250,8 +233,6 @@ case class Dirent(
 //TODO
 //Figure out how to declare Any type
 case class ExpressionTool()
-case class WorkflowStepInput()
-case class WorkflowStepOutput()
 case class EnvVarRequirement(
   `class`: String Refined MatchesRegex[W.`"EnvVarRequirement"`.T],
   envDef: 

@@ -9,7 +9,7 @@ package object cwl {
 
   type WorkflowStepInputId = String
 
-  type WorkflowStepInputSource = Either[String, Array[String]]
+  type WorkflowStepInputSource = String :+: Array[String] :+: CNil
 
   //These are supposed to be valid ECMAScript Expressions.  See http://www.commonwl.org/v1.0/Workflow.html#Expressions
   type Expression = String Refined MatchesRegex[W.`"$({.*}|{.*})"`.T] 
