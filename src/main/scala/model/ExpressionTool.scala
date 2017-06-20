@@ -1,6 +1,7 @@
 package broad.cwl.model
 
 import shapeless.{:+:, CNil}
+import CWLVersion._
 
 case class ExpressionTool(
   inputs: Array[InputParameter] :+: Map[InputParameter#Id, InputParameter#`type`] :+: Map[InputParameter#Id, InputParameter] :+: CNil,

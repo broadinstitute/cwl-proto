@@ -1,6 +1,5 @@
 import ammonite.ops._
 import org.scalatest.FlatSpec
-import com.trueaccord.scalapb.json.{JsonFormat, Parser}
 import io.circe.yaml.parser
 import io.circe.Json
 

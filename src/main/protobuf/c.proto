@@ -1,4 +1,0 @@
-syntax="proto3";
-message C {
-  C inner = 1;
-}

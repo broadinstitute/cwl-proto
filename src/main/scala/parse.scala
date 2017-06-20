@@ -19,17 +19,6 @@ import eu.timepit.refined.auto._
 import io.circe.refined._
 
 object X extends App {
-  val firstTool = """cwlVersion: v1.0
-class: CommandLineTool
-baseCommand: echo
-inputs:
-  message:
-    type: string
-    inputBinding:
-      position: 1
-outputs: []
-"""
-
   val enforceType = """cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: echo
@@ -40,34 +29,8 @@ inputs:
 outputs: []
 """
 
-  val firstWorkflow = """
-cwlVersion: v1.0
-class: Workflow
-s: Hi
-inputs:
-  inp: File
-  ex: string
 
-outputs:
-  classout:
-    type: File
-    outputSource: compile/classfile
-
-steps: 
-  untar:
-    run: tar-param.cwl
-    in:
-      tarfile: inp
-      extractfile: ex
-    out: [example_out]
-  compile: 
-    run: arguments.cwl
-    in:
-      src: untar/example_out
-    out: [classfile]
-"""
-
-val wf = decode[Workflow](parser.parse(firstWorkflow).right.get.noSpaces)
+val wf = decode[Workflow]("")
  println(wf)
 
 }

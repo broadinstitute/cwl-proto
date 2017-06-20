@@ -2,6 +2,7 @@ package broad.cwl.model
 
 import enumeratum._
 
+/*
 sealed abstract class CWLVersion(override val entryName: String) extends EnumEntry
 
 object CWLVersion extends Enum[CWLVersion] {
@@ -20,5 +21,6 @@ object CWLVersion extends Enum[CWLVersion] {
   case object Version1Dev4 extends CWLVersion("v1.0.dev4")
   case object Version1 extends CWLVersion("v1.0")
 }
+*/
 
 
