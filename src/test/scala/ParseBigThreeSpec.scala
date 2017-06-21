@@ -1,5 +1,5 @@
 
-import broad.cwl.model.{CommandLineTool, Workflow}
+import broad.cwl.model._
 
 import io.circe.syntax._
 import io.circe._
@@ -15,7 +15,8 @@ import io.circe._
 import io.circe.parser._
 import io.circe.shapes._
 import io.circe.generic.auto._
-import shapeless.{:+:, CNil}
+import shapeless._, poly._//, ops.union._, union._
+import shapeless.ops.coproduct._
 import cats._, implicits._//, instances._
 
 import io.circe.yaml.parser
@@ -23,6 +24,16 @@ import io.circe._
 import enumeratum.Circe._
 
 import io.circe.refined._
+
+object P extends Poly1 {
+  implicit val x = at[Map[String, WorkflowStep]] {
+    println _
+  }
+
+  implicit val y = at[Array[WorkflowStep]] {
+    println _
+  }
+}
 
 class ParseBigThreeSpec extends FlatSpec with Matchers {
   val namespace = "cwl"
@@ -72,6 +83,7 @@ steps:
     out: [classfile]
 """
     val r = decode[Workflow](parser.parse(firstWorkflow).right.get.noSpaces)
+    r.right.get.steps.fold(P)
     r.isRight should be (true)
   }
 
